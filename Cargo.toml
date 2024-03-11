@@ -1,0 +1,28 @@
+[package]
+name = "message-translator"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# used for parsing command line arguments
+clap = { version = "3.2.24", features = ["derive"] }
+
+# used for translating text
+deepl-api = "0.4.3"
+
+# used for collecting filepaths from a directory
+walkdir = "2.3.2"
+
+# used for parrallel processing
+rayon = "1.5.1"
+
+# used for text searching
+regex = "1.5.4"
+
+# // used for reading and writing xfbin files
+xfbin = {path = "../xfbin"}
+
+# used for reading and writing nuccChunkBinary structs to and from binary
+nuccbin = {path = "../nuccbin"}
