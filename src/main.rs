@@ -1,15 +1,9 @@
 mod api;
 
-use std::path::Path;
-use walkdir::WalkDir;
 use api::message::*;
 use clap::Parser;
-
-
-const LANGS: [&str; 12] = [
-    "chi", "eng", "esmx", "fre", "ger", "idid", "ita", "jpn", "kokr", "pol", "por", "rus",
-];
-
+use std::path::Path;
+use walkdir::WalkDir;
 
 #[derive(Parser, Debug)]
 #[clap(
@@ -20,35 +14,33 @@ const LANGS: [&str; 12] = [
 )]
 struct Args {
     #[clap(short, long)]
-    api_key: String,
+    auth_key: String,
     #[clap(short, long)]
     dir: String,
     #[clap(short, long)]
     source_lang: String,
-    
 }
-
-
 
 fn main() {
     let args = Args::parse();
 
-    // make sure the api key is set and valid
-    if args.api_key.is_empty() {
-        eprintln!("No API key provided. Exiting...");
-        std::process::exit(1);
-    }
-
-    if !LANGS.contains(&args.source_lang.as_str()) {
-        eprintln!("Invalid source language provided. Exiting...");
+    // Make sure the key is set and valid
+    if args.auth_key.is_empty() {
+        eprintln!("No Authentication Key provided. Exiting...");
         std::process::exit(1);
     }
 
     let paths = collect_files(Path::new(args.dir.as_str()));
- 
-    add_translations(paths, args.source_lang.as_str(), args.api_key.as_str());
-}
 
+    add_translations(paths, args.source_lang.as_str(), args.auth_key.as_str());
+
+    
+    // Print the Deepl usage statistics
+    println!(
+        "Usage statistics: {}",
+        api::deepl::usage_statistics(args.auth_key.as_str())
+    );
+}
 
 fn collect_files(directory: &Path) -> Vec<String> {
     let mut files = Vec::new();
@@ -65,6 +57,8 @@ fn collect_files(directory: &Path) -> Vec<String> {
         }
     }
 
-    files.iter().map(|path| path.to_str().unwrap().to_string()).collect::<Vec<String>>()
+    files
+        .iter()
+        .map(|path| path.to_str().unwrap().to_string())
+        .collect::<Vec<String>>()
 }
-
